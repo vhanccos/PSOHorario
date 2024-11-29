@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gestionar Aulas</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='styles.css') }}" />
+  </head>
+  <body>
+    <h1>Gestión de Aulas</h1>
+
+    <h2>Crear Aula</h2>
+    <form id="create-aula-form">
+      <label for="capacidad">Capacidad:</label>
+      <input type="number" id="capacidad" required />
+      <label for="uso_especial">Uso Especial:</label>
+      <input type="text" id="uso_especial" required />
+      <button type="submit">Crear Aula</button>
+    </form>
+
+    <h2>Lista de Aulas</h2>
+    <ul id="aulas-list">
+      {% for aula in aulas %}
+      <li>
+        Aula {{ aula.id }}: {{ aula.capacidad }} estudiantes, Uso: {{
+        aula.uso_especial or 'No especificado' }}
+      </li>
+      {% endfor %}
+    </ul>
+
+    <script>
+      document
+        .getElementById("create-aula-form")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+
+          const capacidad = document.getElementById("capacidad").value;
+          const uso_especial = document.getElementById("uso_especial").value;
+
+          fetch("/aulas/", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ capacidad, uso_especial }),
+          })
+            .then((response) => response.json())
+            .then((aula) => {
+              alert("Aula creada: " + aula.id);
+              cargarAulas();
+            });
+        });
+
+      function cargarAulas() {
+        fetch("/aulas/")
+          .then((response) => response.json())
+          .then((aulas) => {
+            const aulasList = document.getElementById("aulas-list");
+            aulasList.innerHTML = "";
+            aulas.forEach((aula) => {
+              const li = document.createElement("li");
+              li.textContent = `Aula ${aula.id}: ${aula.capacidad} estudiantes, Uso: ${aula.uso_especial}`;
+              aulasList.appendChild(li);
+            });
+          });
+      }
+
+      cargarAulas();
+    </script>
+  </body>
+</html>

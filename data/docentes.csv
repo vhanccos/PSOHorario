@@ -1,0 +1,4 @@
+id,nombre,tipo,disponibilidad,horas_max,horas_min
+D001,Dr. Juan Pérez,Titular,Lunes 9-12;Miércoles 14-17,20,10
+D002,Dra. Ana Gómez,Asociado,Martes 10-13;Jueves 15-18,15,5
+D003,Dr. Luis Martínez,Adjunto,Lunes 13-16;Viernes 9-12,18,10

@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gestionar Turnos</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <h1>Gestión de Turnos</h1>
+
+    <h2>Crear Turno</h2>
+    <form id="create-turno-form">
+      <label for="nombre">Nombre del Turno:</label>
+      <input type="text" id="nombre" required />
+
+      <label for="hora_inicio">Hora de Inicio:</label>
+      <input type="time" id="hora_inicio" required />
+
+      <label for="hora_fin">Hora de Fin:</label>
+      <input type="time" id="hora_fin" required />
+
+      <label for="dias">Días:</label>
+      <input type="text" id="dias" required />
+
+      <button type="submit">Crear Turno</button>
+    </form>
+
+    <h2>Lista de Turnos</h2>
+    <ul id="turnos-list"></ul>
+
+    <script>
+      document
+        .getElementById("create-turno-form")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+
+          const nombre = document.getElementById("nombre").value;
+          const hora_inicio = document.getElementById("hora_inicio").value;
+          const hora_fin = document.getElementById("hora_fin").value;
+          const dias = document.getElementById("dias").value;
+
+          fetch("/turnos/", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              nombre,
+              horario_disponible: {
+                inicio: hora_inicio,
+                fin: hora_fin,
+              },
+              dias,
+            }),
+          })
+            .then((response) => response.json())
+            .then((turno) => {
+              alert("Turno creado: " + turno.id);
+              cargarTurnos();
+            });
+        });
+
+      function cargarTurnos() {
+        fetch("/turnos/")
+          .then((response) => response.json())
+          .then((turnos) => {
+            const turnosList = document.getElementById("turnos-list");
+            turnosList.innerHTML = "";
+            turnos.forEach((turno) => {
+              const li = document.createElement("li");
+              li.textContent = `Turno ${turno.id}: ${turno.nombre}, ${turno.horario_disponible.inicio} - ${turno.horario_disponible.fin}, Días: ${turno.dias}`;
+              turnosList.appendChild(li);
+            });
+          });
+      }
+
+      cargarTurnos();
+    </script>
+  </body>
+</html>

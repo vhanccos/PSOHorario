@@ -1,0 +1,5 @@
+id,nombre,horas_semanales,docentes_calificados,ciclo
+001,Matemáticas,10,001;002,1
+002,Física,8,002;003,2
+003,Química,12,001;003,1
+004,Historia,6,001,3

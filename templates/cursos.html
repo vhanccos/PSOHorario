@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gestionar Cursos</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <h1>Gestión de Cursos</h1>
+
+    <h2>Crear Curso</h2>
+    <form id="create-curso-form">
+      <label for="nombre">Nombre del Curso:</label>
+      <input type="text" id="nombre" required />
+
+      <label for="horas_semanales">Horas Semanales:</label>
+      <input type="number" id="horas_semanales" required />
+
+      <label for="docentes_calificados"
+        >Docentes Calificados (separados por coma):</label
+      >
+      <input type="text" id="docentes_calificados" required />
+
+      <label for="ciclo">Ciclo:</label>
+      <input type="text" id="ciclo" required />
+
+      <button type="submit">Crear Curso</button>
+    </form>
+
+    <h2>Lista de Cursos</h2>
+    <ul id="cursos-list"></ul>
+
+    <script>
+      document
+        .getElementById("create-curso-form")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+
+          const nombre = document.getElementById("nombre").value;
+          const horas_semanales =
+            document.getElementById("horas_semanales").value;
+          const docentes_calificados = document
+            .getElementById("docentes_calificados")
+            .value.split(",")
+            .map((docente) => docente.trim());
+          const ciclo = document.getElementById("ciclo").value;
+
+          fetch("/cursos/", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              nombre,
+              horas_semanales,
+              docentes_calificados,
+              ciclo,
+            }),
+          })
+            .then((response) => response.json())
+            .then((curso) => {
+              alert("Curso creado: " + curso.id);
+              cargarCursos();
+            });
+        });
+
+      function cargarCursos() {
+        fetch("/cursos/")
+          .then((response) => response.json())
+          .then((cursos) => {
+            const cursosList = document.getElementById("cursos-list");
+            cursosList.innerHTML = "";
+            cursos.forEach((curso) => {
+              const li = document.createElement("li");
+              li.textContent = `Curso ${curso.id}: ${curso.nombre}, ${curso.horas_semanales} horas semanales, Docentes: ${curso.docentes_calificados.join(", ")}, Ciclo: ${curso.ciclo}`;
+              cursosList.appendChild(li);
+            });
+          });
+      }
+
+      cargarCursos();
+    </script>
+  </body>
+</html>
